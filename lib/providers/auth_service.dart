@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:blackbox/home.dart';
-import 'package:blackbox/login.dart';
-import 'package:blackbox/setup.dart';
+import 'package:blackbox/screens/login.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_database/firebase_database.dart';
+
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {

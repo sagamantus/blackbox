@@ -1,9 +1,10 @@
-import 'package:blackbox/constants.dart';
-import 'package:blackbox/auth_service.dart';
-import 'package:blackbox/cube.dart';
+import 'package:flutter/material.dart';
+
+import 'package:blackbox/utils/constants.dart';
+import 'package:blackbox/providers/auth_service.dart';
+import 'package:blackbox/widgets/cube.dart';
 
 import 'dart:math';
-import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);

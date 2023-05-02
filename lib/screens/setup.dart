@@ -1,13 +1,13 @@
-import 'package:blackbox/constants.dart';
-import 'package:blackbox/auth_service.dart';
 import 'package:blackbox/main.dart';
+import 'package:blackbox/providers/auth_service.dart';
+import 'package:blackbox/utils/constants.dart';
 
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_database/firebase_database.dart';
+
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Setup extends StatefulWidget {
