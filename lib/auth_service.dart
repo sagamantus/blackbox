@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:blackbox/home.dart';
 import 'package:blackbox/login.dart';
+import 'package:blackbox/setup.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
@@ -18,7 +22,7 @@ class AuthService {
         });
   }
 
-  signInWithGoogle() async {
+  signInWithGoogle(context) async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser =
         await GoogleSignIn(scopes: <String>["email"]).signIn();
@@ -38,7 +42,7 @@ class AuthService {
   }
 
   signOut() async {
-    await GoogleSignIn().disconnect();
     await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().disconnect();
   }
 }

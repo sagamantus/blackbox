@@ -1,7 +1,12 @@
 import 'package:blackbox/constants.dart';
 import 'package:blackbox/auth_service.dart';
 import 'package:blackbox/dashboard.dart';
+import 'package:blackbox/setup.dart';
+import 'package:blackbox/todo.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -16,6 +21,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String page = "home";
+  Color page_color = AppColors().backgroundPurple;
   @override
   Widget build(BuildContext context) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -153,14 +159,42 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
+                      Container(
+                        height: 20,
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: TextButton(
+                          child: const Text(
+                            'DASHBOARD',
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 15),
+                          ),
+                          onPressed: () {
+                            page = "dashboard";
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: TextButton(
+                          child: const Text(
+                            'TO DO LIST',
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 15),
+                          ),
+                          onPressed: () {
+                            page = "todo";
+                            setState(() {});
+                          },
+                        ),
+                      ),
                     ],
                   ),
                   Align(
                     alignment: Alignment.center,
-                    child: MaterialButton(
-                      padding: const EdgeInsets.all(10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0)),
+                    child: TextButton(
                       child: const Text(
                         'LOG OUT',
                         style: TextStyle(color: Colors.black54, fontSize: 15),
@@ -181,12 +215,24 @@ class _HomeState extends State<Home> {
     // Home Page
     SafeArea app_page = SafeArea(child: Container());
     if (page == "home") {
-      app_page = dashboard(scaffoldKey);
+      page = "dashboard";
+      var t = dashboard(context, scaffoldKey);
+      app_page = t[0];
+      page = t[1];
+      setState(() {});
+    } else if (page == "dashboard") {
+      page = "dashboard";
+      var t = dashboard(context, scaffoldKey);
+      app_page = t[0];
+      page = t[1];
+      setState(() {});
+    } else if (page == "todo") {
+      app_page = todo(scaffoldKey);
     }
     return Scaffold(
         key: scaffoldKey,
         drawer: _drawer,
-        backgroundColor: blueLight,
+        backgroundColor: page_color,
         body: app_page);
   }
 }

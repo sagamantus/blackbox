@@ -1,14 +1,21 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:blackbox/constants.dart';
 import 'package:blackbox/auth_service.dart';
+import 'package:blackbox/setup.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-dashboard(scaffoldKey) {
-  FirebaseDatabase database = FirebaseDatabase.instance;
-  final ref = FirebaseDatabase.instance.ref();
-  return SafeArea(
+dashboard(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey) {
+  var return_page = "dashboard";
+  var page = SafeArea(
     child: Padding(
       padding: const EdgeInsets.fromLTRB(25.0, 30.0, 25.0, 50.0),
       child: Column(
@@ -21,7 +28,7 @@ dashboard(scaffoldKey) {
                 onTap: () => scaffoldKey.currentState!.openDrawer(),
                 child: const Icon(
                   Icons.menu_rounded,
-                  color: blueText,
+                  color: Colors.black87,
                 ),
               )
             ],
@@ -31,27 +38,183 @@ dashboard(scaffoldKey) {
           ),
           Flexible(
             child: Text(
-              "Hello " + FirebaseAuth.instance.currentUser!.uid + "!",
+              "Hi ${FirebaseAuth.instance.currentUser!.displayName!.split(' ')[0]}",
               style: const TextStyle(
-                color: Colors.white,
+                color: Colors.black87,
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 30,
+              ),
+            ),
+          ),
+          const Flexible(
+            child: Padding(
+              padding: EdgeInsets.only(top: 5.0),
+              child: Text(
+                "Here's your balance",
+                style: TextStyle(
+                  color: Colors.black26,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
               ),
             ),
           ),
           FutureBuilder<DataSnapshot>(
-            future: ref.child("test").get(),
+            future: FirebaseDatabase.instance
+                .ref()
+                .child(FirebaseAuth.instance.currentUser!.uid)
+                .get(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final _snapshot = snapshot.data;
                 if (_snapshot!.exists) {
-                  return Text(_snapshot.value.toString());
+                  Map<String, dynamic> data =
+                      jsonDecode(jsonEncode(_snapshot.value))
+                          as Map<String, dynamic>;
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(top: 15.0, bottom: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Bank",
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 5.0, right: 3.0),
+                                        child: Text(
+                                          "INR",
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                      ),
+                                      RichText(
+                                        text: TextSpan(
+                                          // Note: Styles for TextSpans must be explicitly defined.
+                                          // Child text spans will inherit styles from parent
+                                          style: const TextStyle(
+                                            fontSize: 30.0,
+                                            color: Colors.black,
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text: data["bank"]
+                                                    .truncate()
+                                                    .toString()),
+                                            TextSpan(
+                                              text:
+                                                  ".${((data["bank"] - data["bank"].truncate()) * 100).truncate().toString().padLeft(2, '0')}",
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                color: Colors.black54,
+                                width: 0.5,
+                                height: 35.0,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Cash",
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 5.0, right: 3.0),
+                                        child: Text(
+                                          "INR",
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                      ),
+                                      RichText(
+                                        text: TextSpan(
+                                          // Note: Styles for TextSpans must be explicitly defined.
+                                          // Child text spans will inherit styles from parent
+                                          style: const TextStyle(
+                                            fontSize: 30.0,
+                                            color: Colors.black,
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text: data["cash"]
+                                                    .truncate()
+                                                    .toString()),
+                                            TextSpan(
+                                              text:
+                                                  ".${((data["cash"] - data["cash"].truncate()) * 100).truncate().toString().padLeft(2, '0')}",
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
                 } else {
-                  return Text('No data available.');
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Setup()),
+                    );
+                  });
+                  return const Text('No data available.');
                 }
               } else {
                 // Show a loading widget
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
             },
           ),
@@ -59,4 +222,5 @@ dashboard(scaffoldKey) {
       ),
     ),
   );
+  return [page, return_page];
 }
